@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/erie_lab/Documents/sensoray826/build",
+  "command": "/usr/bin/c++  -I/home/erie_lab/Documents/sensoray826/include -std=gnu++17 -o CMakeFiles/sensoray826_pressure_control.dir/src/main.cpp.o -c /home/erie_lab/Documents/sensoray826/src/main.cpp",
+  "file": "/home/erie_lab/Documents/sensoray826/src/main.cpp"
+},
+{
+  "directory": "/home/erie_lab/Documents/sensoray826/build",
+  "command": "/usr/bin/c++  -I/home/erie_lab/Documents/sensoray826/include -std=gnu++17 -o CMakeFiles/sensoray826_pressure_control.dir/src/pressure_controller.cpp.o -c /home/erie_lab/Documents/sensoray826/src/pressure_controller.cpp",
+  "file": "/home/erie_lab/Documents/sensoray826/src/pressure_controller.cpp"
+}
+]
