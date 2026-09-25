@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/sensoray826_pressure_control.dir/src/main.cpp.o CMakeFiles/sensoray826_pressure_control.dir/src/pressure_controller.cpp.o -o sensoray826_pressure_control   -L/home/erie_lab/Downloads/sdk_826_linux_3.3.17/middleware  -Wl,-rpath,/home/erie_lab/Downloads/sdk_826_linux_3.3.17/middleware -l826_64 
