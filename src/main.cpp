@@ -3,6 +3,15 @@
 
 #include <iostream>
 
+
+/*
+Change to kpa
+Connect all three to move the thumb thingy
+At least 5hz sine wavew 5 up down oscillations per second
++/- 8 kpa for the thumb thingy 
+
+*/
+
 int main()
 {
     Festo festo;
