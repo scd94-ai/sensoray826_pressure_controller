@@ -96,7 +96,9 @@ int Festo::initializeADC()
     }
 
     status = S826_AdcSlotlistWrite(
-        board_num_, (1u << adc_slot_), S826_BITWRITE
+        board_num_,
+        (1u << adc_slot_),
+        S826_BITSET
     );
 
     if (status != S826_ERR_OK) return status;
@@ -185,7 +187,7 @@ int Festo::runDiagnostic()
 {
     constexpr int resolution = 30;
     constexpr int cycles = 2;
-    constexpr double updates_per_second = 3.0;
+    constexpr double updates_per_second = 10;
 
     double pressures[resolution];
 

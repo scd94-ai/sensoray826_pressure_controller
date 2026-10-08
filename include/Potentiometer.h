@@ -14,8 +14,8 @@ class Potentiometer{
     public:
         Potentiometer(
         unsigned int board_num = 0,
-        unsigned int adc_channel = 14,
-        unsigned int adc_slot = 1,
+        unsigned int adc_channel = 12,
+        unsigned int adc_slot = 4,
         double min_voltage = 0.0,
         double max_voltage = 5.0
         );
