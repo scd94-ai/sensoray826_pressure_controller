@@ -1,134 +1,139 @@
 #include "Festo.h"
 #include "826api.h"
-#include <cmath>
+
 #include <chrono>
+#include <cmath>
 #include <iostream>
 #include <thread>
 
 namespace {
     constexpr double PI = 3.14159265358979323846;
-    constexpr unsigned int ADC_SETTLING_TIME_US = 0;
 }
 
 Festo::Festo(
-    unsigned int board_num,
+    Sensoray826& sensoray,
     unsigned int dac_channel,
     unsigned int adc_channel,
     unsigned int adc_slot,
-    double min_pressure_bar,
-    double max_pressure_bar,
+    double min_pressure_kpa,
+    double max_pressure_kpa,
     double min_voltage,
     double max_voltage
 )
-    : board_num_(board_num),
+    : sensoray_(sensoray),
       dac_channel_(dac_channel),
       adc_channel_(adc_channel),
       adc_slot_(adc_slot),
-      min_pressure_bar_(min_pressure_bar),
-      max_pressure_bar_(max_pressure_bar),
+      min_pressure_kpa_(min_pressure_kpa),
+      max_pressure_kpa_(max_pressure_kpa),
       min_voltage_(min_voltage),
       max_voltage_(max_voltage)
 {
 }
 
-double Festo::pressureToVoltage(double pressure_bar)
+double Festo::pressureToVoltage(double pressure_kpa) const
 {
-    double fraction = (pressure_bar - min_pressure_bar_) /
-                      (max_pressure_bar_ - min_pressure_bar_);
+    const double fraction =
+        (pressure_kpa - min_pressure_kpa_) /
+        (max_pressure_kpa_ - min_pressure_kpa_);
 
     return min_voltage_ + fraction * (max_voltage_ - min_voltage_);
 }
 
-double Festo::voltageToPressure(double voltage)
+double Festo::voltageToPressure(double voltage) const
 {
-    double fraction = (voltage - min_voltage_) /
-                      (max_voltage_ - min_voltage_);
+    const double fraction =
+        (voltage - min_voltage_) /
+        (max_voltage_ - min_voltage_);
 
-    return min_pressure_bar_ + fraction * (max_pressure_bar_ - min_pressure_bar_);
+    return min_pressure_kpa_ +
+           fraction * (max_pressure_kpa_ - min_pressure_kpa_);
 }
 
-unsigned int Festo::pressureToDac(double pressure_bar)
+unsigned int Festo::pressureToDac(double pressure_kpa) const
 {
-    double voltage = pressureToVoltage(pressure_bar);
-    double normalized_voltage = voltage / max_voltage_;
+    const double voltage = pressureToVoltage(pressure_kpa);
+    const double normalized_voltage =
+        (voltage - min_voltage_) / (max_voltage_ - min_voltage_);
 
     return static_cast<unsigned int>(
         std::lround(normalized_voltage * 0xFFFF)
     );
 }
 
-int Festo::setPressure(double pressure_bar)
+int Festo::initialize()
 {
-    if (pressure_bar < min_pressure_bar_ || pressure_bar > max_pressure_bar_) {
-        std::cerr << "Pressure must be between "
-                  << min_pressure_bar_ << " and "
-                  << max_pressure_bar_ << " bar.\n";
-        return -1;
-    }
-
-    double voltage = pressureToVoltage(pressure_bar);
-    unsigned int setpoint = pressureToDac(pressure_bar);
-
-    int status = S826_DacDataWrite(board_num_, dac_channel_, setpoint, 0);
+    int status = sensoray_.configureDac(dac_channel_);
 
     if (status != S826_ERR_OK) {
-        std::cerr << "S826_DacDataWrite failed: " << status << '\n';
+        std::cerr << "Failed to configure Festo DAC channel "
+                  << dac_channel_ << ": " << status << '\n';
         return status;
     }
 
-    std::cout << "Pressure command : " << pressure_bar << " bar\n"
+    status = sensoray_.configureAdcSlot(adc_slot_, adc_channel_);
+
+    if (status != S826_ERR_OK) {
+        std::cerr << "Failed to configure Festo ADC slot "
+                  << adc_slot_ << ": " << status << '\n';
+        return status;
+    }
+
+    status = setPressure(0.0);
+
+    if (status != S826_ERR_OK) {
+        std::cerr << "Failed to set initial Festo pressure to 0 kPa.\n";
+        return status;
+    }
+
+    std::cout << "Festo initialized."
+              << " DAC=" << dac_channel_
+              << " ADC=" << adc_channel_
+              << " slot=" << adc_slot_ << '\n';
+
+    return S826_ERR_OK;
+}
+
+int Festo::setPressure(double pressure_kpa)
+{
+    if (pressure_kpa < min_pressure_kpa_ ||
+        pressure_kpa > max_pressure_kpa_) {
+        std::cerr << "Pressure must be between "
+                  << min_pressure_kpa_ << " and "
+                  << max_pressure_kpa_ << " kPa.\n";
+        return -1;
+    }
+
+    const double voltage = pressureToVoltage(pressure_kpa);
+    const unsigned int setpoint = pressureToDac(pressure_kpa);
+
+    const int status =
+        sensoray_.writeDac(dac_channel_, setpoint);
+
+    if (status != S826_ERR_OK) {
+        std::cerr << "DAC write failed: " << status << '\n';
+        return status;
+    }
+
+    std::cout << "Pressure command : " << pressure_kpa << " kPa\n"
               << "Command voltage  : " << voltage << " V\n"
               << "DAC setpoint     : " << setpoint << " / 65535\n";
 
     return S826_ERR_OK;
 }
 
-int Festo::initializeADC()
-{
-    int status = S826_AdcSlotConfigWrite(
-        board_num_, adc_slot_, adc_channel_,
-        ADC_SETTLING_TIME_US, S826_ADC_GAIN_1
-    );
-
-    if (status != S826_ERR_OK) {
-        std::cerr << "S826_AdcSlotConfigWrite failed: " << status << '\n';
-        return status;
-    }
-
-    status = S826_AdcSlotlistWrite(
-        board_num_,
-        (1u << adc_slot_),
-        S826_BITSET
-    );
-
-    if (status != S826_ERR_OK) return status;
-
-    status = S826_AdcTrigModeWrite(board_num_, 0);
-    if (status != S826_ERR_OK) return status;
-
-    status = S826_AdcEnableWrite(board_num_, 1);
-    return status;
-}
-
 int Festo::readPressure(
     double& voltage,
-    double& pressure_bar,
+    double& pressure_kpa,
     unsigned int response_wait_ms
 )
 {
-    int buf[16] = {};
-    uint slotlist = (1u << adc_slot_);
+    int status = sensoray_.discardAdcSample(adc_slot_);
 
-    int pending_status = S826_AdcRead(
-        board_num_, buf, nullptr, &slotlist, 0
-    );
-
-    if (pending_status != S826_ERR_OK &&
-        pending_status != S826_ERR_MISSEDTRIG &&
-        pending_status != S826_ERR_NOTREADY) {
-        std::cerr << "Initial S826_AdcRead failed: "
-                  << pending_status << '\n';
-        return pending_status;
+    if (status != S826_ERR_OK) {
+        std::cerr << "Failed to discard old ADC sample: "
+                  << status << '\n';
+        return status;
     }
 
     if (response_wait_ms > 0) {
@@ -137,46 +142,41 @@ int Festo::readPressure(
         );
     }
 
-    slotlist = (1u << adc_slot_);
-    buf[adc_slot_] = 0;
-
-    int status = S826_AdcRead(
-        board_num_, buf, nullptr, &slotlist, 1000
+    status = sensoray_.readAdcVoltage(
+        adc_slot_,
+        voltage,
+        1000
     );
 
-    if (status != S826_ERR_OK &&
-        status != S826_ERR_MISSEDTRIG) {
-        std::cerr << "S826_AdcRead failed: " << status << '\n';
+    if (status != S826_ERR_OK) {
+        std::cerr << "Festo ADC read failed: "
+                  << status << '\n';
         return status;
     }
 
-    if ((slotlist & (1u << adc_slot_)) == 0) {
-        std::cerr << "ADC read returned no data for slot "
-                  << adc_slot_ << ".\n";
-        return -1;
-    }
+    pressure_kpa = voltageToPressure(voltage);
 
-    short raw = static_cast<short>(buf[adc_slot_] & 0xFFFF);
-
-    voltage = static_cast<double>(raw) * 10.0 / 32767.0;
-    pressure_bar = voltageToPressure(voltage);
-
-    std::cout << "ADC raw value   : " << raw << '\n'
-              << "Actual voltage  : " << voltage << " V\n"
-              << "Actual pressure : " << pressure_bar << " bar\n";
+    std::cout << "Actual voltage  : " << voltage << " V\n"
+              << "Actual pressure : " << pressure_kpa << " kPa\n";
 
     return S826_ERR_OK;
 }
 
-int Festo::generateSineWave(double* buf, int resolution)
+int Festo::generateSineWave(double* buf, int resolution) const
 {
     if (buf == nullptr || resolution <= 0) return -1;
 
-    double center = (max_pressure_bar_ + min_pressure_bar_) / 2.0;
-    double amplitude = (max_pressure_bar_ - min_pressure_bar_) / 2.0;
+    const double center =
+        (max_pressure_kpa_ + min_pressure_kpa_) / 2.0;
+
+    const double amplitude =
+        (max_pressure_kpa_ - min_pressure_kpa_) / 2.0;
 
     for (int i = 0; i < resolution; ++i) {
-        double phase = 2.0 * PI * i / resolution;
+        const double phase =
+            2.0 * PI * static_cast<double>(i) /
+            static_cast<double>(resolution);
+
         buf[i] = center + amplitude * std::sin(phase);
     }
 
@@ -187,22 +187,28 @@ int Festo::runDiagnostic()
 {
     constexpr int resolution = 30;
     constexpr int cycles = 2;
-    constexpr double updates_per_second = 10;
+    constexpr double updates_per_second = 10.0;
 
-    double pressures[resolution];
+    double pressures_kpa[resolution];
 
-    int status = generateSineWave(pressures, resolution);
+    int status =
+        generateSineWave(pressures_kpa, resolution);
+
     if (status != S826_ERR_OK) return status;
 
-    auto start_time = std::chrono::steady_clock::now();
+    const auto start_time =
+        std::chrono::steady_clock::now();
 
     for (int cycle = 0; cycle < cycles; ++cycle) {
         for (int i = 0; i < resolution; ++i) {
-            int sample_number = cycle * resolution + i;
+            const int sample_number =
+                cycle * resolution + i;
 
-            auto target_time =
+            const auto target_time =
                 start_time +
-                std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+                std::chrono::duration_cast<
+                    std::chrono::steady_clock::duration
+                >(
                     std::chrono::duration<double>(
                         sample_number / updates_per_second
                     )
@@ -210,67 +216,21 @@ int Festo::runDiagnostic()
 
             std::this_thread::sleep_until(target_time);
 
-            status = setPressure(pressures[i]);
+            status = setPressure(pressures_kpa[i]);
             if (status != S826_ERR_OK) return status;
 
             double voltage = 0.0;
-            double pressure = 0.0;
+            double pressure_kpa = 0.0;
 
-            status = readPressure(voltage, pressure, 100);
+            status = readPressure(
+                voltage,
+                pressure_kpa,
+                100
+            );
+
             if (status != S826_ERR_OK) return status;
         }
     }
 
     return setPressure(0.0);
-}
-
-int Festo::initialize()
-{
-    int system_status = S826_SystemOpen();
-
-    if (system_status < 0) {
-        std::cerr << "Error opening Sensoray system: "
-                  << system_status << '\n';
-        return system_status;
-    }
-
-    if (system_status == 0) {
-        std::cerr << "No Sensoray 826 boards detected.\n";
-        return -1;
-    }
-
-    if (!(system_status & (1 << board_num_))) {
-        std::cerr << "Sensoray board "
-                  << board_num_ << " was not detected.\n";
-        return -1;
-    }
-
-    int status = S826_DacRangeWrite(
-        board_num_, dac_channel_, S826_DAC_SPAN_0_10, 0
-    );
-
-    if (status != S826_ERR_OK) {
-        std::cerr << "Failed to configure DAC.\n";
-        return status;
-    }
-
-    status = initializeADC();
-    if (status != S826_ERR_OK) {
-        std::cerr << "Failed to initialize ADC.\n";
-        return status;
-    }
-
-    status = setPressure(0.0);
-    if (status != S826_ERR_OK) {
-        std::cerr << "Failed to set initial pressure.\n";
-        return status;
-    }
-
-    std::cout << "Festo initialized successfully.\n"
-              << "Board: " << board_num_ << '\n'
-              << "DAC: " << dac_channel_ << '\n'
-              << "ADC: " << adc_channel_ << '\n'
-              << "ADC slot: " << adc_slot_ << '\n';
-
-    return S826_ERR_OK;
 }
