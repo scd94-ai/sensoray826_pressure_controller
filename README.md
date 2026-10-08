@@ -1,22 +1,111 @@
 # Sensoray 826 Pressure Controller
 
-C++ terminal application for commanding a VPPI-5L-3-G18-1V1H-V1-S1D pressure regulator through a Sensoray 826 board. Supports manual pressure commands from −1 to +1 bar, analog pressure feedback, and a timed sine-wave diagnostic. Feedback is displayed for monitoring; the application does not automatically adjust commands to correct pressure error.
+C++17 terminal application for controlling three FESTO VPPI proportional pressure regulators and reading one potentiometer through a shared Sensoray 826 DAQ.
 
-## Requirements
+The software uses one shared `Sensoray826` object for board-level initialization and I/O. Each `Festo` and `Potentiometer` object stores only the channels and conversion information specific to that device.
 
-- Linux with the Sensoray 826 driver installed and the board accessible.
-- Sensoray 826 SDK middleware library (`lib826_64`).
-- CMake 3.16 or newer and a C++17 compiler.
+## Pressure units
 
-The Sensoray API headers are included in `include/`. CMake searches for the middleware library in:
+All pressure values in the application are expressed in **kilopascals (kPa)**.
 
-```text
-$HOME/Downloads/sdk_826_linux_3.3.17/middleware
-```
+The current VPPI configuration is:
 
-## Build and run
+| Pressure | Command / feedback voltage |
+| --- | --- |
+| -100 kPa | 0 V |
+| 0 kPa | 5 V |
+| +100 kPa | 10 V |
 
-From the project root:
+This is the same physical range as -1 to +1 bar, since 1 bar = 100 kPa.
+
+## Current channel mapping
+
+| Device | DAC output | ADC channel | ADC slot |
+| --- | ---: | ---: | ---: |
+| Festo 1 | DAC0 | AIN15 | 0 |
+| Festo 2 | DAC1 | AIN14 | 1 |
+| Festo 3 | DAC2 | AIN13 | 2 |
+| Potentiometer | - | AIN12 | 3 |
+
+The three FESTOs use separate DAC command outputs and separate analog feedback inputs. ADC slots are also unique so the four devices can coexist in the Sensoray scan list.
+
+## Class responsibilities
+
+### Sensoray826
+
+`Sensoray826` owns shared board-level behavior:
+
+- opens and closes the Sensoray system
+- verifies the selected board exists
+- configures DAC channels
+- configures and enables ADC slots
+- starts/stops ADC conversions
+- performs low-level DAC writes
+- performs low-level ADC voltage reads
+
+Only one `Sensoray826` object is created for board 0.
+
+### Festo
+
+Each `Festo` object stores:
+
+- DAC channel
+- ADC feedback channel
+- ADC slot
+- pressure range in kPa
+- analog voltage range
+
+The class handles:
+
+- kPa-to-voltage conversion
+- voltage-to-kPa conversion
+- DAC setpoint conversion
+- pressure commands
+- feedback reads
+- sine-wave diagnostic generation/execution
+
+The default pressure range is -100 to +100 kPa.
+
+### Potentiometer
+
+The `Potentiometer` class stores:
+
+- ADC channel
+- ADC slot
+- minimum voltage
+- maximum voltage
+
+It can read the potentiometer voltage and convert that voltage to a percentage of its configured range.
+
+## Initialization order
+
+The intended startup sequence is:
+
+1. Create one `Sensoray826` object.
+2. Open the Sensoray system once.
+3. Create all three `Festo` objects and the `Potentiometer` object.
+4. Initialize each device so its DAC/ADC channels and slots are configured.
+5. Start ADC conversion once after all slots have been configured.
+6. Enter the user menu.
+7. On shutdown, command all FESTOs to 0 kPa and close the Sensoray system once.
+
+This avoids each device independently opening, closing, or globally reconfiguring the Sensoray board.
+
+## Diagnostic
+
+The current diagnostic preserves the previous behavior:
+
+- 30 pressure samples per sine cycle
+- 2 cycles
+- 10 command updates per second
+- pressure range from -100 to +100 kPa
+- 100 ms feedback delay after each pressure command
+
+Because there are 30 samples per cycle and 10 updates per second, the resulting sine-wave frequency is approximately 0.333 Hz. The update rate is not the same thing as the sine-wave frequency.
+
+## Build
+
+From the repository root:
 
 ```bash
 cmake -S . -B build
@@ -24,107 +113,44 @@ cmake --build build
 ./build/sensoray826_pressure_control
 ```
 
-If the middleware library is installed elsewhere, provide its full path during configuration:
+From inside an already-created `build/` directory:
 
 ```bash
-cmake -S . -B build -DSENSORAY826_LIB=/path/to/lib826_64.so
+cmake ..
+cmake --build .
+./sensoray826_pressure_control
 ```
 
-After editing and saving source or header files, rebuild and restart the program:
+If an old `CMakeCache.txt` points to another computer or source directory, delete and recreate the build directory:
 
 ```bash
+cd ..
+rm -rf build
+cmake -S . -B build
 cmake --build build
-./build/sensoray826_pressure_control
 ```
-
-For a Makefile build, you can also run `make` from inside `build/`. Only affected files are recompiled. You do not need to run `cmake ..` for every source edit.
-
-## Hardware configuration
-
-The current code assumes the following signal mapping. Select the DAC channel that matches the regulator's command wiring.
-
-| Setting | Current configuration |
-| --- | --- |
-| Pressure command | −1 to +1 bar mapped to 0–10 V |
-| DAC channel | Selectable, 0–7; default is DAC0 |
-| Pressure feedback | AIN15, assigned to ADC slot 0 |
-| ADC input range | ±10 V |
-| Feedback conversion | 0–10 V interpreted as −1 to +1 bar |
-
-The command and feedback mappings in the code are:
-
-| Pressure | Command / feedback voltage | DAC setpoint |
-| --- | --- | --- |
-| −1 bar | 0 V | 0 |
-| 0 bar | 5 V | 32768 |
-| +1 bar | 10 V | 65535 |
-
-Zero pressure therefore requires approximately 5 V. A zero DAC setpoint commands −1 bar.
-
-Custom initialization changes the board, DAC channel, and initial pressure. The feedback channel remains AIN15, as configured in `s826_init_vppi_adc()`.
-
-## Using the program
-
-Initialization runs before the operating menu. Enter:
-
-- `default`: use the first detected board, DAC channel 0, and an initial command of 0 bar.
-- Any other word, such as `custom`: enter a detected board number (0–15), DAC channel (0–7), and initial pressure (−1 to +1 bar).
-
-The program configures the DAC, applies the initial pressure, starts ADC conversion, and reads feedback after a 250 ms response delay. After initialization succeeds, it displays:
-
-```text
-1. Set pressure manually
-2. Diagnostic (-1 to +1 bar sine, 2 cycles, 3 updates/sec)
-3. Quit
-```
-
-### Manual pressure
-
-Choose `1` and enter a pressure from −1 to +1 bar. The program writes the command, discards pending ADC feedback, waits 250 ms for the regulator to respond, and reads feedback again. It then displays commanded pressure, measured pressure, measured voltage, and pressure error (`measured − commanded`) before returning to the menu.
-
-Negative pressures, including `-1`, are valid commands. Out-of-range pressures return to the menu without issuing a command. Use menu option `3` to quit.
-
-### Diagnostic
-
-Choose `2` to run the diagnostic on the initialized board and DAC channel.
-
-| Parameter | Value |
-| --- | --- |
-| Waveform | `P[i] = sin(2π * i / 30)` bar, for `i = 0…29`, repeated twice |
-| Nominal pressure range | −1 to +1 bar |
-| Starting command | 0 bar (approximately 5 V) |
-| Samples | 30 per cycle; 60 waveform commands across two cycles |
-| Command update rate | Approximately 3 per second |
-| Test duration | 20 seconds nominal, followed by a 0 bar command and feedback read |
-| Sine frequency | 0.1 Hz |
-| Feedback response delay | 100 ms after each waveform command |
-
-Three updates per second means one command about every 333 ms. The sine cycle takes 10 seconds; this is not a 3 Hz pressure oscillation.
-
-Output includes a test summary, cycle and sample numbers, scheduled times, command pressures, command voltages, DAC setpoints, raw ADC values, measured voltages and pressures, and pressure errors (`measured − commanded`). Timing uses `steady_clock` and `sleep_until` with an absolute schedule; actual command times may vary with system scheduling, I/O, and feedback-read delays.
-
-At the end, the program commands 0 bar (approximately 5 V), reads feedback after a 250 ms response delay, and returns to the menu. The menu does not accept another selection while the diagnostic runs.
-
-### Quit
-
-Choose `3` to attempt a 0 bar command (approximately 5 V), stop ADC conversions, and close the Sensoray system. Command or feedback errors during operation, invalid nonnumeric menu or pressure input, and end-of-input also leave the operating loop through this shutdown path. Initialization failures close the Sensoray system and exit without running the common 0 bar shutdown path. Forced termination does not run that cleanup.
 
 ## Project layout
 
-| File | Purpose |
-| --- | --- |
-| `src/main.cpp` | Initialization call, operating menu, diagnostic timing, and shutdown |
-| `src/pressure_controller.cpp` | Hardware initialization, sine sample generation, pressure conversion, DAC writes, and ADC reads |
-| `include/pressure_controller.h` | Controller declarations and shared pressure and command-voltage limits |
-| `include/826api.h`, `include/826const.h` | Sensoray SDK headers |
-| `CMakeLists.txt` | Build configuration and middleware library lookup |
+```text
+include/
+    826api.h
+    826const.h
+    Sensoray826.h
+    Festo.h
+    Potentiometer.h
 
-## Troubleshooting
+src/
+    Sensoray826.cpp
+    Festo.cpp
+    potentiometer.cpp
+    main.cpp
+```
 
-- **Program appears unchanged:** save your files, rebuild, and launch `./build/sensoray826_pressure_control`. An already running process continues using its previous code.
-- **No operating menu:** complete initialization first. If it fails, inspect the printed error. Feedback reads use a 250 ms response delay during initialization and manual operation, or 100 ms during the waveform, followed by a bounded ADC wait; missing conversions produce an error. The response delay does not guarantee that pressure has fully settled.
-- **Unexpected pressure feedback:** check the AIN15 feedback connection and the configured 0–10 V to −1 to +1 bar mapping. The program prints a warning if measured voltage is below −0.1 V or above 10.1 V; it does not clamp the displayed pressure or stop solely because of this warning.
-- **Library not found during configuration:** set `SENSORAY826_LIB` to the installed middleware library's full path.
-- **No boards found or system-open error:** check the board connection, driver installation, and device access.
+## Notes
 
-Hardware behavior has not been verified by automated testing.
+- The Sensoray ADC is currently configured for the +/-10 V range.
+- The potentiometer defaults to a 0-5 V useful signal range.
+- All configured ADC slots are enabled with `S826_BITSET`, so one device does not disable another device's slot.
+- The program returns all FESTOs to 0 kPa before closing the Sensoray system during normal shutdown.
+- Hardware behavior still needs to be verified on the physical system.

@@ -1,0 +1,26 @@
+[
+{
+  "directory": "/home/erie_lab/Documents/sensoray826/build",
+  "command": "/usr/bin/c++  -I/home/erie_lab/Documents/sensoray826/include -std=gnu++17 -o CMakeFiles/sensoray826_pressure_control.dir/src/main.cpp.o -c /home/erie_lab/Documents/sensoray826/src/main.cpp",
+  "file": "/home/erie_lab/Documents/sensoray826/src/main.cpp",
+  "output": "CMakeFiles/sensoray826_pressure_control.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/erie_lab/Documents/sensoray826/build",
+  "command": "/usr/bin/c++  -I/home/erie_lab/Documents/sensoray826/include -std=gnu++17 -o CMakeFiles/sensoray826_pressure_control.dir/src/sensoray826.cpp.o -c /home/erie_lab/Documents/sensoray826/src/sensoray826.cpp",
+  "file": "/home/erie_lab/Documents/sensoray826/src/sensoray826.cpp",
+  "output": "CMakeFiles/sensoray826_pressure_control.dir/src/sensoray826.cpp.o"
+},
+{
+  "directory": "/home/erie_lab/Documents/sensoray826/build",
+  "command": "/usr/bin/c++  -I/home/erie_lab/Documents/sensoray826/include -std=gnu++17 -o CMakeFiles/sensoray826_pressure_control.dir/src/festo.cpp.o -c /home/erie_lab/Documents/sensoray826/src/festo.cpp",
+  "file": "/home/erie_lab/Documents/sensoray826/src/festo.cpp",
+  "output": "CMakeFiles/sensoray826_pressure_control.dir/src/festo.cpp.o"
+},
+{
+  "directory": "/home/erie_lab/Documents/sensoray826/build",
+  "command": "/usr/bin/c++  -I/home/erie_lab/Documents/sensoray826/include -std=gnu++17 -o CMakeFiles/sensoray826_pressure_control.dir/src/potentiometer.cpp.o -c /home/erie_lab/Documents/sensoray826/src/potentiometer.cpp",
+  "file": "/home/erie_lab/Documents/sensoray826/src/potentiometer.cpp",
+  "output": "CMakeFiles/sensoray826_pressure_control.dir/src/potentiometer.cpp.o"
+}
+]

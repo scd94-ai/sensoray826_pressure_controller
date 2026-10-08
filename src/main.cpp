@@ -1,120 +1,151 @@
+#include "826api.h"
 #include "Festo.h"
 #include "Potentiometer.h"
-#include "826api.h"
+#include "Sensoray826.h"
 
 #include <iostream>
 
 int main()
 {
-    Festo festo1(0, 0, 15, 0);
-    Festo festo2(0, 1, 14, 1);
-    Festo festo3(0, 2, 13, 2);
+    Sensoray826 sensoray(0);
 
-    Potentiometer pot1(0, 12, 3);
+    int status = sensoray.initialize();
 
-    int status1 = festo1.initialize();
-    if (status1 != S826_ERR_OK) {
-        std::cerr << "Festo 1 initialization failed: " << status1 << '\n';
-        S826_SystemClose();
+    if (status != S826_ERR_OK) {
+        std::cerr << "Sensoray initialization failed: "
+                  << status << '\n';
         return 1;
     }
 
-    int status2 = festo2.initialize();
-    if (status2 != S826_ERR_OK) {
-        std::cerr << "Festo 2 initialization failed: " << status2 << '\n';
-        S826_SystemClose();
-        return 1;
+    // board 0 is owned by the shared Sensoray826 object.
+    // Each Festo gets its own DAC channel, ADC channel, and ADC slot.
+    Festo festo1(sensoray, 0, 15, 0);
+    Festo festo2(sensoray, 1, 14, 1);
+    Festo festo3(sensoray, 2, 13, 2);
+
+    // Potentiometer uses AIN12 and ADC slot 3.
+    Potentiometer pot1(sensoray, 12, 3);
+
+    Festo* festos[] = {&festo1, &festo2, &festo3};
+
+    for (int i = 0; i < 3; ++i) {
+        status = festos[i]->initialize();
+
+        if (status != S826_ERR_OK) {
+            std::cerr << "Festo " << i + 1
+                      << " initialization failed: "
+                      << status << '\n';
+            sensoray.close();
+            return 1;
+        }
     }
 
-    int status3 = festo3.initialize();
-    if (status3 != S826_ERR_OK) {
-        std::cerr << "Festo 3 initialization failed: " << status3 << '\n';
-        S826_SystemClose();
-        return 1;
-    }
+    status = pot1.initialize();
 
-    int pot_status = pot1.initialize();
-    if (pot_status != S826_ERR_OK) {
+    if (status != S826_ERR_OK) {
         std::cerr << "Potentiometer initialization failed: "
-                  << pot_status << '\n';
-        S826_SystemClose();
+                  << status << '\n';
+        sensoray.close();
+        return 1;
+    }
+
+    status = sensoray.startAdc();
+
+    if (status != S826_ERR_OK) {
+        std::cerr << "Failed to start Sensoray ADC: "
+                  << status << '\n';
+        sensoray.close();
         return 1;
     }
 
     while (true) {
         std::cout << "\n"
-                  << "============== Controller ==============\n"
-                  << "1. Test Festo 1\n"
-                  << "2. Test Festo 2\n"
-                  << "3. Test Festo 3\n"
+                  << "================ Controller ================\n"
+                  << "1. Set Festo 1 pressure\n"
+                  << "2. Set Festo 2 pressure\n"
+                  << "3. Set Festo 3 pressure\n"
                   << "4. Read all Festo pressures\n"
                   << "5. Read potentiometer\n"
                   << "6. Run Festo 1 diagnostic\n"
                   << "7. Run Festo 2 diagnostic\n"
                   << "8. Run Festo 3 diagnostic\n"
                   << "9. Quit\n"
-                  << "========================================\n"
+                  << "============================================\n"
                   << "Select option: ";
 
-        int option;
-        std::cin >> option;
+        int option = 0;
 
-        if (!std::cin) {
+        if (!(std::cin >> option)) {
             std::cerr << "Invalid input.\n";
             break;
         }
 
-        if (option == 9) {
-            break;
-        }
+        if (option == 9) break;
 
         if (option >= 1 && option <= 3) {
-            double desired_pressure;
+            double desired_pressure_kpa = 0.0;
 
-            std::cout << "Enter desired pressure (-1 to +1 bar): ";
-            std::cin >> desired_pressure;
+            std::cout
+                << "Enter desired pressure (-100 to +100 kPa): ";
 
-            Festo* selected_festo = nullptr;
-
-            if (option == 1) selected_festo = &festo1;
-            if (option == 2) selected_festo = &festo2;
-            if (option == 3) selected_festo = &festo3;
-
-            int status = selected_festo->setPressure(desired_pressure);
-
-            if (status != S826_ERR_OK) {
-                continue;
+            if (!(std::cin >> desired_pressure_kpa)) {
+                std::cerr << "Invalid pressure input.\n";
+                break;
             }
 
-            double voltage = 0.0;
-            double pressure = 0.0;
+            Festo& selected_festo =
+                *festos[option - 1];
 
-            status = selected_festo->readPressure(
+            status =
+                selected_festo.setPressure(
+                    desired_pressure_kpa
+                );
+
+            if (status != S826_ERR_OK) continue;
+
+            double voltage = 0.0;
+            double actual_pressure_kpa = 0.0;
+
+            status = selected_festo.readPressure(
                 voltage,
-                pressure,
+                actual_pressure_kpa,
                 250
             );
 
             if (status == S826_ERR_OK) {
-                std::cout << "Measured pressure: "
-                          << pressure << " bar\n";
+                std::cout
+                    << "Measured pressure: "
+                    << actual_pressure_kpa
+                    << " kPa\n"
+                    << "Pressure error: "
+                    << actual_pressure_kpa -
+                       desired_pressure_kpa
+                    << " kPa\n";
             }
 
             continue;
         }
 
         if (option == 4) {
-            double voltage;
-            double pressure;
+            for (int i = 0; i < 3; ++i) {
+                double voltage = 0.0;
+                double pressure_kpa = 0.0;
 
-            std::cout << "\nFesto 1:\n";
-            festo1.readPressure(voltage, pressure, 0);
+                std::cout << "\nFesto "
+                          << i + 1 << ":\n";
 
-            std::cout << "\nFesto 2:\n";
-            festo2.readPressure(voltage, pressure, 0);
+                status = festos[i]->readPressure(
+                    voltage,
+                    pressure_kpa,
+                    0
+                );
 
-            std::cout << "\nFesto 3:\n";
-            festo3.readPressure(voltage, pressure, 0);
+                if (status != S826_ERR_OK) {
+                    std::cerr
+                        << "Failed to read Festo "
+                        << i + 1 << ".\n";
+                }
+            }
 
             continue;
         }
@@ -122,43 +153,62 @@ int main()
         if (option == 5) {
             double voltage = 0.0;
 
-            if (pot1.readVoltage(voltage) == S826_ERR_OK) {
-                std::cout << "Pot voltage: "
-                          << voltage << " V\n"
-                          << "Pot position: "
-                          << pot1.readPercent(voltage)
-                          << "%\n";
+            status = pot1.readVoltage(voltage);
+
+            if (status == S826_ERR_OK) {
+                std::cout
+                    << "Pot voltage: "
+                    << voltage << " V\n"
+                    << "Pot position: "
+                    << pot1.readPercent(voltage)
+                    << "%\n";
             }
 
             continue;
         }
 
-        if (option == 6) {
-            festo1.runDiagnostic();
-            continue;
-        }
+        if (option >= 6 && option <= 8) {
+            Festo& selected_festo =
+                *festos[option - 6];
 
-        if (option == 7) {
-            festo2.runDiagnostic();
-            continue;
-        }
+            status =
+                selected_festo.runDiagnostic();
 
-        if (option == 8) {
-            festo3.runDiagnostic();
+            if (status != S826_ERR_OK) {
+                std::cerr
+                    << "Diagnostic failed: "
+                    << status << '\n';
+            }
+
             continue;
         }
 
         std::cerr << "Select a valid option.\n";
     }
 
-    // Return all regulators to 0 bar
-    festo1.setPressure(0.0);
-    festo2.setPressure(0.0);
-    festo3.setPressure(0.0);
+    std::cout
+        << "\nReturning all Festos to 0 kPa...\n";
 
-    S826_SystemClose();
+    for (Festo* festo : festos) {
+        const int shutdown_status =
+            festo->setPressure(0.0);
+
+        if (shutdown_status != S826_ERR_OK) {
+            std::cerr
+                << "Warning: failed to return a Festo "
+                << "to 0 kPa. Error: "
+                << shutdown_status << '\n';
+        }
+    }
+
+    const int close_status = sensoray.close();
+
+    if (close_status != S826_ERR_OK) {
+        std::cerr << "Sensoray close returned error: "
+                  << close_status << '\n';
+        return 1;
+    }
 
     std::cout << "Sensoray system closed.\n";
-
     return 0;
 }
