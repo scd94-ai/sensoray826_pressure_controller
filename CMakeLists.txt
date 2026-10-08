@@ -9,8 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(sensoray826_pressure_control
     src/main.cpp
-    src/Sensoray826.cpp
-    src/Festo.cpp
+    src/sensoray826.cpp
+    src/festo.cpp
     src/potentiometer.cpp
 )
 
