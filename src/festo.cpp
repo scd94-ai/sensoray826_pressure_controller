@@ -4,6 +4,7 @@
 #include <chrono>
 #include <cmath>
 #include <iostream>
+#include <limits>
 #include <thread>
 
 namespace {
@@ -53,8 +54,8 @@ double Festo::voltageToPressure(double voltage) const
 unsigned int Festo::pressureToDac(double pressure_kpa) const
 {
     const double voltage = pressureToVoltage(pressure_kpa);
-    const double normalized_voltage =
-        (voltage - min_voltage_) / (max_voltage_ - min_voltage_);
+    // The Sensoray DAC is configured for a physical 0..10 V span.
+    const double normalized_voltage = voltage / 10.0;
 
     return static_cast<unsigned int>(
         std::lround(normalized_voltage * 0xFFFF)
@@ -96,7 +97,8 @@ int Festo::initialize()
 
 int Festo::setPressure(double pressure_kpa)
 {
-    if (pressure_kpa < min_pressure_kpa_ ||
+    if (!std::isfinite(pressure_kpa) ||
+        pressure_kpa < min_pressure_kpa_ ||
         pressure_kpa > max_pressure_kpa_) {
         std::cerr << "Pressure must be between "
                   << min_pressure_kpa_ << " and "
@@ -104,7 +106,19 @@ int Festo::setPressure(double pressure_kpa)
         return -1;
     }
 
+    if (!std::isfinite(min_pressure_kpa_) ||
+        !std::isfinite(max_pressure_kpa_) ||
+        min_pressure_kpa_ >= max_pressure_kpa_ ||
+        !std::isfinite(min_voltage_) || !std::isfinite(max_voltage_) ||
+        min_voltage_ < 0.0 || max_voltage_ > 10.0 ||
+        min_voltage_ >= max_voltage_) {
+        std::cerr << "Invalid Festo pressure/voltage configuration.\n";
+        return -1;
+    }
+
     const double voltage = pressureToVoltage(pressure_kpa);
+    if (!std::isfinite(voltage) || voltage < 0.0 || voltage > 10.0)
+        return -1;
     const unsigned int setpoint = pressureToDac(pressure_kpa);
 
     const int status =
@@ -154,6 +168,11 @@ int Festo::readPressure(
         return status;
     }
 
+    if (!std::isfinite(voltage) || voltage < -10.0 || voltage > 10.0) {
+        std::cerr << "Invalid ADC feedback voltage.\n";
+        return -1;
+    }
+    // An inferred value only: verify Festo actual-value scaling and ADC wiring.
     pressure_kpa = voltageToPressure(voltage);
 
     std::cout << "Actual voltage  : " << voltage << " V\n"
@@ -198,6 +217,7 @@ int Festo::runDiagnostic()
 
     const auto start_time =
         std::chrono::steady_clock::now();
+    int diagnostic_status = S826_ERR_OK;
 
     for (int cycle = 0; cycle < cycles; ++cycle) {
         for (int i = 0; i < resolution; ++i) {
@@ -217,7 +237,10 @@ int Festo::runDiagnostic()
             std::this_thread::sleep_until(target_time);
 
             status = setPressure(pressures_kpa[i]);
-            if (status != S826_ERR_OK) return status;
+            if (status != S826_ERR_OK) {
+                diagnostic_status = status;
+                break;
+            }
 
             double voltage = 0.0;
             double pressure_kpa = 0.0;
@@ -228,9 +251,14 @@ int Festo::runDiagnostic()
                 100
             );
 
-            if (status != S826_ERR_OK) return status;
+            if (status != S826_ERR_OK) {
+                diagnostic_status = status;
+                break;
+            }
         }
+        if (diagnostic_status != S826_ERR_OK) break;
     }
 
-    return setPressure(0.0);
+    const int reset_status = setPressure(0.0);
+    return diagnostic_status != S826_ERR_OK ? diagnostic_status : reset_status;
 }
