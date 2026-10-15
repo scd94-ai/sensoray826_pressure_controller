@@ -43,9 +43,14 @@ double Festo::pressureToVoltage(double pressure_kpa) const
 
 double Festo::voltageToPressure(double voltage) const
 {
+    // Provisional feedback-only calibration based on measured 8.96 V
+    // at positive full scale with the output configured to 0..10 V.
+    // The command/DAC mapping remains unchanged.
+    constexpr double feedback_gain = 0.896;
+    const double feedback_span =
+        feedback_gain * (max_voltage_ - min_voltage_);
     const double fraction =
-        (voltage - min_voltage_) /
-        (max_voltage_ - min_voltage_);
+        (voltage - min_voltage_) / feedback_span;
 
     return min_pressure_kpa_ +
            fraction * (max_pressure_kpa_ - min_pressure_kpa_);
@@ -172,11 +177,11 @@ int Festo::readPressure(
         std::cerr << "Invalid ADC feedback voltage.\n";
         return -1;
     }
-    // An inferred value only: verify Festo actual-value scaling and ADC wiring.
+    // Provisional calibrated estimate, not independently verified physical pressure.
     pressure_kpa = voltageToPressure(voltage);
 
     std::cout << "Actual voltage  : " << voltage << " V\n"
-              << "Actual pressure : " << pressure_kpa << " kPa\n";
+              << "Estimated pressure (provisional): " << pressure_kpa << " kPa\n";
 
     return S826_ERR_OK;
 }

@@ -10,13 +10,13 @@ All pressure values in the application are expressed in **kilopascals (kPa)**.
 
 The analog conversion assumes the FESTO pressure limits match the configured pressure range. The current software defaults to -50 to +50 kPa. **Analog feedback scaling is not verified against the FESTO display and must not be treated as calibrated physical pressure.**
 
-For the current software range:
+For the current software range (0–5 V command):
 
 | Pressure | Command / feedback voltage |
 | --- | --- |
 | -50 kPa | 0 V |
-| 0 kPa | 5 V |
-| +50 kPa | 10 V |
+| 0 kPa | 2.5 V |
+| +50 kPa | 5 V |
 
 The configured range is -0.5 to +0.5 bar, since 1 bar = 100 kPa.
 
@@ -156,3 +156,15 @@ src/
 - All configured ADC slots are enabled with `S826_BITSET`, so one device does not disable another device's slot.
 - The program returns all FESTOs to 0 kPa before closing the Sensoray system during normal shutdown.
 - Hardware behavior still needs to be verified on the physical system.
+
+## Provisional empirical feedback mapping
+
+The three FESTOs now use 0–5 V analog input/output for −50 to +50 kPa, while the Sensoray DAC hardware retains its 0–10 V span. Outgoing commands are unchanged.
+
+A previous full-scale feedback measurement was 8.96 V with the FESTO configured for 0–10 V. As a **provisional** measurement-based compensation, the feedback-only conversion uses a gain of 0.896. Under a 0–5 V output configuration, the extrapolated positive-full-scale feedback voltage is 4.48 V:
+
+```
+estimated_kpa = -50.0 + 100.0 * measured_feedback_volts / 4.48
+```
+
+This is NOT a verified pressure calibration, and may differ for individual devices or operating conditions. Verify against independent pressure instrumentation before closed-loop or safety-critical use. Raw feedback voltage is preserved in terminal output.
