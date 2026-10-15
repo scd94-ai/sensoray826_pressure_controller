@@ -28,8 +28,8 @@ public:
         unsigned int dac_channel,
         unsigned int adc_channel,
         unsigned int adc_slot,
-        double min_pressure_kpa = -100.0,
-        double max_pressure_kpa = 100.0,
+        double min_pressure_kpa = -50.0,
+        double max_pressure_kpa = 50.0,
         double min_voltage = 0.0,
         double max_voltage = 10.0
     );
