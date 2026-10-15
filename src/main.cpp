@@ -28,6 +28,14 @@ int main()
 
     Festo* festos[] = {&festo1, &festo2, &festo3};
 
+    int initialized_festos = 0;
+    auto reset_initialized_festos = [&]() {
+        for (int i = 0; i < initialized_festos; ++i) {
+            if (festos[i]->setPressure(0.0) != S826_ERR_OK)
+                std::cerr << "Warning: failed to send reset to Festo " << i + 1 << "\n";
+        }
+    };
+
     for (int i = 0; i < 3; ++i) {
         status = festos[i]->initialize();
 
@@ -35,9 +43,11 @@ int main()
             std::cerr << "Festo " << i + 1
                       << " initialization failed: "
                       << status << '\n';
+            reset_initialized_festos();
             sensoray.close();
             return 1;
         }
+        ++initialized_festos;
     }
 
     status = pot1.initialize();
@@ -45,6 +55,7 @@ int main()
     if (status != S826_ERR_OK) {
         std::cerr << "Potentiometer initialization failed: "
                   << status << '\n';
+        reset_initialized_festos();
         sensoray.close();
         return 1;
     }
@@ -54,6 +65,7 @@ int main()
     if (status != S826_ERR_OK) {
         std::cerr << "Failed to start Sensoray ADC: "
                   << status << '\n';
+        reset_initialized_festos();
         sensoray.close();
         return 1;
     }
