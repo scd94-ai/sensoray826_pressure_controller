@@ -10,6 +10,8 @@ private:
 public:
     explicit Sensoray826(unsigned int board_num = 0);
     ~Sensoray826();
+    Sensoray826(const Sensoray826&) = delete;
+    Sensoray826& operator=(const Sensoray826&) = delete;
 
     int initialize();
     int close();
