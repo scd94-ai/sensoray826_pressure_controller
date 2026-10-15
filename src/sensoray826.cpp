@@ -33,6 +33,7 @@ int Sensoray826::initialize()
 
     if (system_status == 0) {
         std::cerr << "No Sensoray 826 boards detected.\n";
+        S826_SystemClose();
         return -1;
     }
 
@@ -82,7 +83,7 @@ int Sensoray826::writeDac(
     unsigned int setpoint
 )
 {
-    if (!system_open_ || dac_channel > 7) return -1;
+    if (!system_open_ || dac_channel > 7 || setpoint > 0xFFFFu) return -1;
 
     return S826_DacDataWrite(
         board_num_,
@@ -161,7 +162,7 @@ int Sensoray826::stopAdc()
 
 int Sensoray826::discardAdcSample(unsigned int adc_slot)
 {
-    if (!system_open_ || adc_slot > 15) return -1;
+    if (!system_open_ || !adc_running_ || adc_slot > 15) return -1;
 
     int buf[16] = {};
     uint slotlist = (1u << adc_slot);
@@ -174,11 +175,10 @@ int Sensoray826::discardAdcSample(unsigned int adc_slot)
         0
     );
 
-    if (status == S826_ERR_OK ||
-        status == S826_ERR_MISSEDTRIG ||
-        status == S826_ERR_NOTREADY) {
+    if (status == S826_ERR_OK || status == S826_ERR_NOTREADY) {
         return S826_ERR_OK;
     }
+    // Preserve missed-trigger warnings rather than silently discarding them.
 
     return status;
 }
@@ -208,6 +208,10 @@ int Sensoray826::readAdcVoltage(
         status != S826_ERR_MISSEDTRIG) {
         return status;
     }
+    if (status == S826_ERR_MISSEDTRIG) {
+        std::cerr << "Warning: Sensoray ADC missed a trigger on slot "
+                  << adc_slot << "\n";
+    }
 
     if ((slotlist & (1u << adc_slot)) == 0) {
         return -1;
@@ -219,7 +223,7 @@ int Sensoray826::readAdcVoltage(
     voltage =
         static_cast<double>(raw) * 10.0 / 32767.0;
 
-    return S826_ERR_OK;
+    return status;
 }
 
 unsigned int Sensoray826::boardNumber() const
