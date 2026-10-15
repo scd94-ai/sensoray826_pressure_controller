@@ -2,6 +2,9 @@
 #include "826api.h"
 
 #include <iostream>
+#include <limits>
+#include <algorithm>
+#include <cmath>
 
 Potentiometer::Potentiometer(
     Sensoray826& sensoray,
@@ -58,6 +61,9 @@ int Potentiometer::readVoltage(double& voltage)
 
 double Potentiometer::readPercent(double voltage) const
 {
-    return (voltage - min_voltage_) /
-           (max_voltage_ - min_voltage_) * 100.0;
+    if (!std::isfinite(voltage) || !std::isfinite(min_voltage_) ||
+        !std::isfinite(max_voltage_) || max_voltage_ <= min_voltage_)
+        return std::numeric_limits<double>::quiet_NaN();
+    return std::clamp((voltage - min_voltage_) /
+                      (max_voltage_ - min_voltage_) * 100.0, 0.0, 100.0);
 }
