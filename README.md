@@ -8,15 +8,17 @@ The software uses one shared `Sensoray826` object for board-level initialization
 
 All pressure values in the application are expressed in **kilopascals (kPa)**.
 
-The current VPPI configuration is:
+The analog conversion assumes the FESTO pressure limits match the configured pressure range. The current software defaults to -50 to +50 kPa. **Analog feedback scaling is not verified against the FESTO display and must not be treated as calibrated physical pressure.**
+
+For the current software range:
 
 | Pressure | Command / feedback voltage |
 | --- | --- |
-| -100 kPa | 0 V |
+| -50 kPa | 0 V |
 | 0 kPa | 5 V |
-| +100 kPa | 10 V |
+| +50 kPa | 10 V |
 
-This is the same physical range as -1 to +1 bar, since 1 bar = 100 kPa.
+The configured range is -0.5 to +0.5 bar, since 1 bar = 100 kPa.
 
 ## Current channel mapping
 
@@ -64,7 +66,7 @@ The class handles:
 - feedback reads
 - sine-wave diagnostic generation/execution
 
-The default pressure range is -100 to +100 kPa.
+The default pressure range is -50 to +50 kPa.
 
 ### Potentiometer
 
@@ -98,7 +100,7 @@ The current diagnostic preserves the previous behavior:
 - 30 pressure samples per sine cycle
 - 2 cycles
 - 10 command updates per second
-- pressure range from -100 to +100 kPa
+- pressure range from -50 to +50 kPa
 - 100 ms feedback delay after each pressure command
 
 Because there are 30 samples per cycle and 10 updates per second, the resulting sine-wave frequency is approximately 0.333 Hz. The update rate is not the same thing as the sine-wave frequency.
@@ -141,8 +143,8 @@ include/
     Potentiometer.h
 
 src/
-    Sensoray826.cpp
-    Festo.cpp
+    sensoray826.cpp
+    festo.cpp
     potentiometer.cpp
     main.cpp
 ```
