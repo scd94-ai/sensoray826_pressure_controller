@@ -19,10 +19,9 @@ int main()
 
     // board 0 is owned by the shared Sensoray826 object.
     // Each Festo gets its own DAC channel, ADC channel, and ADC slot.
-    Festo festo1(sensoray, 0, 15, 0);
-    Festo festo2(sensoray, 1, 14, 1);
-    Festo festo3(sensoray, 2, 13, 2);
-
+    Festo festo1(sensoray, 0, 15, 0, -50.0, 50.0, 0.0, 5.0);
+    Festo festo2(sensoray, 1, 14, 1, -50.0, 50.0, 0.0, 5.0);
+    Festo festo3(sensoray, 2, 13, 2, -50.0, 50.0, 0.0, 5.0);
     // Potentiometer uses AIN12 and ADC slot 3.
     Potentiometer pot1(sensoray, 12, 3);
 
