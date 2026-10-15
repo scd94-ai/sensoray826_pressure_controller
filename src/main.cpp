@@ -86,7 +86,7 @@ int main()
             double desired_pressure_kpa = 0.0;
 
             std::cout
-                << "Enter desired pressure (-100 to +100 kPa): ";
+                << "Enter desired pressure (-50 to +50 kPa): ";
 
             if (!(std::cin >> desired_pressure_kpa)) {
                 std::cerr << "Invalid pressure input.\n";
