@@ -66,13 +66,14 @@ private:
   static constexpr double kMaxKPa = 50.0;
   // This adapter independently enforces the core's maximum per-write delta.
   static constexpr double kMaxDeltaKPa = 20.0;
-  static constexpr std::uint64_t kMaxTtlMs = 1000;
+  static constexpr auto kMaxTtl = std::chrono::seconds(1);
 
-  void publishState() {
-    // last_complete_write_ is a record of a fully successful three-channel
-    // driver transaction, NOT measured physical pressure.
-    state_pub_->publish(sensoray826_ros::makeState(
-        session_, sequence_, last_complete_write_, ready_, fault_));
+  void publishState(bool write_success = false) {
+    // This is a host-side write acknowledgement, NOT a physical pressure reading.
+    auto msg = sensoray826_ros::makeState(
+        session_, sequence_, last_complete_write_, write_success, ready_, fault_);
+    msg.header.stamp = get_clock()->now();
+    state_pub_->publish(msg);
   }
 
   bool forceZeroAll() {
@@ -94,7 +95,7 @@ private:
     ready_ = false;
     fault_ = reason;
     forceZeroAll();
-    publishState();
+    publishState(false);
   }
 
   void onCommand(const sensoray826_ros::Command& msg) {
@@ -102,15 +103,26 @@ private:
     // threaded executor to serialize writes and the watchdog.
     const auto now = Clock::now();
     const auto command = sensoray826_ros::parseCommand(msg);
-    if (!ready_) {
-      publishState();
-      return; // Fault requires process restart, not implicit re-arm.
+    if (command.session.empty() || command.sequence == 0) {
+      fault_ = "invalid_command_identity";
+      publishState(false);
+      return;
     }
     if (have_command_ && command.session == session_ &&
         command.sequence <= sequence_) {
-      return; // Discard duplicate and out-of-order commands.
+      return; // Reject duplicate and out-of-order commands.
     }
-    if (command.validity_ms == 0 || command.validity_ms > kMaxTtlMs) {
+    // For accepted commands, the acknowledgement must echo these exact IDs,
+    // including rejected writes.
+    session_ = command.session;
+    sequence_ = command.sequence;
+    have_command_ = true;
+    if (!ready_) {
+      publishState(false);
+      return; // Fault requires restart, not implicit re-arm.
+    }
+    if (command.validity <= std::chrono::nanoseconds::zero() ||
+        command.validity > kMaxTtl) {
       failSafe("invalid_command_ttl");
       return;
     }
@@ -127,10 +139,7 @@ private:
 
     // The arrival time is all we know; this cannot detect a message delayed
     // before receipt unless the message schema includes source timestamps.
-    session_ = command.session;
-    sequence_ = command.sequence;
-    have_command_ = true;
-    expires_at_ = now + std::chrono::milliseconds(command.validity_ms);
+    expires_at_ = now + command.validity;
 
     std::array<double,3> target =
         command.force_zero ? std::array<double,3>{0.,0.,0.} : command.pressure;
@@ -153,7 +162,7 @@ private:
     }
     last_complete_write_ = target;
     fault_.clear();
-    publishState();
+    publishState(true);
   }
 
   void onWatchdog() {
@@ -167,7 +176,7 @@ private:
   std::size_t initialized_ = 0;
   bool ready_ = false;
   bool have_command_ = false;
-  std::uint64_t session_ = 0;
+  std::string session_;
   std::uint64_t sequence_ = 0;
   std::array<double,3> last_complete_write_{0.,0.,0.};
   Clock::time_point expires_at_{};
