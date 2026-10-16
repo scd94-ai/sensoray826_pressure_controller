@@ -25,7 +25,7 @@ add_executable(sensoray_node
   "${CONTROLLER_ROOT}/src/festo.cpp"
 )
 target_include_directories(sensoray_node PRIVATE
-  "${CONTROLLER_ROOT}/include" "${S826_API_INCLUDE_DIR}")
+  "${CONTROLLER_ROOT}/include" "${S826_API_INCLUDE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/include")
 ament_target_dependencies(sensoray_node rclcpp soft_actuator_msgs)
 target_link_libraries(sensoray_node "${S826_LIBRARY}")
 install(TARGETS sensoray_node DESTINATION lib/${PROJECT_NAME})
