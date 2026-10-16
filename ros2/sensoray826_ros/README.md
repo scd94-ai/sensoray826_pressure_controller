@@ -8,28 +8,19 @@ does not modify the standalone executable.
 - Subscribes: `/soft_haptics/right/pressure_command` — `soft_actuator_msgs/msg/PressureCommand`
 - Publishes: `/soft_haptics/right/sensoray_state` — `soft_actuator_msgs/msg/PressureState`
 
-## Important integration step: message fields
+## Exact message contract (provided by Jiaji)
 
-The public `soft-actuator-control-core` repository has **no ROS message
-definitions**. The existing `soft_actuator_msgs` package in Jiaji's private/local
-workspace owns the actual definitions. The file
-`include/sensoray826_ros/message_adapter.hpp` currently uses **provisional**
-field names: `pressure_kpa`, `session_id`, `sequence_id`,
-`validity_duration_ms`, `force_zero`, and for the state
-`pressure_kpa`, `ready`, `fault`. **Do not expect compilation until
-these are reconciled against the actual interface.**
+The adapter now matches the supplied `PressureCommand.msg` and
+`PressureState.msg` fields. Commands contain `session_id` (string),
+`sequence` (uint64), `pressure_kpa` (three float64 values),
+`force_zero` (bool), `valid_for` (ROS Duration), and `reason`.
+State publishes `header.stamp`, matching `session_id`,
+`command_sequence`, `written_pressure_kpa`, `write_success`,
+`ready`, and `fault`.
 
-Run:
-
-```bash
-source /opt/ros/humble/setup.bash   # Or jazzy; use one distro consistently.
-cd ~/Documents/jxs1778/soft_actuator_ros2_ws
-source install/setup.bash          # If already built.
-ros2 interface show soft_actuator_msgs/msg/PressureCommand
-ros2 interface show soft_actuator_msgs/msg/PressureState
-```
-
-Update only `message_adapter.hpp` using the actual member names and types.
+Get the actual message package from:
+`/home/erie_lab/Documents/jxs1778/soft_actuator_ros2_ws/src/soft_actuator_ros2/soft_actuator_msgs`.
+Copy or link it to your workspace `src/`, then build with colcon.
 
 ## Add to Jiaji's workspace
 
