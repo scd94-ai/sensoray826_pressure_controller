@@ -8,7 +8,8 @@ find_package(rclcpp REQUIRED)
 find_package(soft_actuator_msgs REQUIRED)
 
 # Standalone hardware sources stay in their original repository.
-get_filename_component(CONTROLLER_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../.." ABSOLUTE)
+get_filename_component(PACKAGE_REAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}" REALPATH)
+get_filename_component(CONTROLLER_ROOT "${PACKAGE_REAL_DIR}/../.." ABSOLUTE)
 find_path(S826_API_INCLUDE_DIR 826api.h
   PATHS "$ENV{HOME}/Downloads/sdk_826_linux_3.3.17/middleware"
         "$ENV{HOME}/Downloads/sdk_826_linux_3.3.17"
