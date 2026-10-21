@@ -1,0 +1,11 @@
+/home/erie_lab/Documents/sensoray826/install/lib/libsensoray826_driver.a
+/home/erie_lab/Documents/sensoray826/install/include/826const.h
+/home/erie_lab/Documents/sensoray826/install/include/826api.h
+/home/erie_lab/Documents/sensoray826/install/include/Potentiometer.h
+/home/erie_lab/Documents/sensoray826/install/include/Sensoray826.h
+/home/erie_lab/Documents/sensoray826/install/include/Festo.h
+/home/erie_lab/Documents/sensoray826/install/bin/sensoray826_app
+/home/erie_lab/Documents/sensoray826/install/lib/cmake/sensoray826_driver/sensoray826_driverTargets.cmake
+/home/erie_lab/Documents/sensoray826/install/lib/cmake/sensoray826_driver/sensoray826_driverTargets-release.cmake
+/home/erie_lab/Documents/sensoray826/install/lib/cmake/sensoray826_driver/sensoray826_driverConfig.cmake
+/home/erie_lab/Documents/sensoray826/install/lib/cmake/sensoray826_driver/sensoray826_driverConfigVersion.cmake

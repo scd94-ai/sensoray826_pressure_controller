@@ -63,7 +63,8 @@ CMAKE_BINARY_DIR = /home/erie_lab/Documents/sensoray826/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/sensoray826_pressure_control.dir/all
+all: CMakeFiles/sensoray826_driver.dir/all
+all: CMakeFiles/sensoray826_app.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -71,34 +72,61 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/sensoray826_pressure_control.dir/clean
+clean: CMakeFiles/sensoray826_driver.dir/clean
+clean: CMakeFiles/sensoray826_app.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/sensoray826_pressure_control.dir
+# Target rules for target CMakeFiles/sensoray826_driver.dir
 
 # All Build rule for target.
-CMakeFiles/sensoray826_pressure_control.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/erie_lab/Documents/sensoray826/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target sensoray826_pressure_control"
-.PHONY : CMakeFiles/sensoray826_pressure_control.dir/all
+CMakeFiles/sensoray826_driver.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_driver.dir/build.make CMakeFiles/sensoray826_driver.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_driver.dir/build.make CMakeFiles/sensoray826_driver.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/erie_lab/Documents/sensoray826/build/CMakeFiles --progress-num=3,4,5,6 "Built target sensoray826_driver"
+.PHONY : CMakeFiles/sensoray826_driver.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/sensoray826_pressure_control.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/erie_lab/Documents/sensoray826/build/CMakeFiles 5
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/sensoray826_pressure_control.dir/all
+CMakeFiles/sensoray826_driver.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/erie_lab/Documents/sensoray826/build/CMakeFiles 4
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/sensoray826_driver.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/erie_lab/Documents/sensoray826/build/CMakeFiles 0
-.PHONY : CMakeFiles/sensoray826_pressure_control.dir/rule
+.PHONY : CMakeFiles/sensoray826_driver.dir/rule
 
 # Convenience name for target.
-sensoray826_pressure_control: CMakeFiles/sensoray826_pressure_control.dir/rule
-.PHONY : sensoray826_pressure_control
+sensoray826_driver: CMakeFiles/sensoray826_driver.dir/rule
+.PHONY : sensoray826_driver
 
 # clean rule for target.
-CMakeFiles/sensoray826_pressure_control.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/clean
-.PHONY : CMakeFiles/sensoray826_pressure_control.dir/clean
+CMakeFiles/sensoray826_driver.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_driver.dir/build.make CMakeFiles/sensoray826_driver.dir/clean
+.PHONY : CMakeFiles/sensoray826_driver.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/sensoray826_app.dir
+
+# All Build rule for target.
+CMakeFiles/sensoray826_app.dir/all: CMakeFiles/sensoray826_driver.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_app.dir/build.make CMakeFiles/sensoray826_app.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_app.dir/build.make CMakeFiles/sensoray826_app.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/erie_lab/Documents/sensoray826/build/CMakeFiles --progress-num=1,2 "Built target sensoray826_app"
+.PHONY : CMakeFiles/sensoray826_app.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/sensoray826_app.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/erie_lab/Documents/sensoray826/build/CMakeFiles 6
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/sensoray826_app.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/erie_lab/Documents/sensoray826/build/CMakeFiles 0
+.PHONY : CMakeFiles/sensoray826_app.dir/rule
+
+# Convenience name for target.
+sensoray826_app: CMakeFiles/sensoray826_app.dir/rule
+.PHONY : sensoray826_app
+
+# clean rule for target.
+CMakeFiles/sensoray826_app.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_app.dir/build.make CMakeFiles/sensoray826_app.dir/clean
+.PHONY : CMakeFiles/sensoray826_app.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.
