@@ -105,7 +105,7 @@ The current diagnostic preserves the previous behavior:
 
 Because there are 30 samples per cycle and 10 updates per second, the resulting sine-wave frequency is approximately 0.333 Hz. The update rate is not the same thing as the sine-wave frequency.
 
-## Build
+## Build the standalone application
 
 From the repository root:
 
@@ -131,6 +131,30 @@ rm -rf build
 cmake -S . -B build
 cmake --build build
 ```
+
+## Build and install the reusable driver library
+
+The same source files are also built as the `sensoray826::driver` CMake target. The standalone application remains available.
+
+Set `SENSORAY826_SDK_ROOT` to the Sensoray SDK's `middleware` directory (or to the SDK root), then build and install:
+
+```bash
+export SENSORAY826_SDK_ROOT="$HOME/Downloads/sdk_826_linux_3.3.17/middleware"
+cmake -S . -B build -DCMAKE_INSTALL_PREFIX="$HOME/.local"
+cmake --build build
+cmake --install build
+```
+
+A downstream CMake project can then link the installed library:
+
+```cmake
+find_package(sensoray826_driver CONFIG REQUIRED)
+
+add_executable(my_controller main.cpp)
+target_link_libraries(my_controller PRIVATE sensoray826::driver)
+```
+
+The installed package resolves the Sensoray SDK library on the consuming machine. The exported target exposes the driver's existing C++ API; it does not by itself add the separate ADC acquisition and board-ownership methods currently expected by the ROS adapter.
 
 ## Project layout
 
