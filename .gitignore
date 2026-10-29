@@ -28,3 +28,6 @@ Testing/
 # Python-generated files
 __pycache__/
 *.py[cod]
+
+# Local snapshots and backups
+/backup_*/
