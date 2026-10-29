@@ -1,2 +1,0 @@
-/usr/bin/ar qc libsensoray826_driver.a CMakeFiles/sensoray826_driver.dir/src/sensoray826.cpp.o CMakeFiles/sensoray826_driver.dir/src/board_ownership.cpp.o CMakeFiles/sensoray826_driver.dir/src/festo.cpp.o CMakeFiles/sensoray826_driver.dir/src/potentiometer.cpp.o
-/usr/bin/ranlib libsensoray826_driver.a

@@ -1,2 +1,0 @@
-festo_output_logging 1 0.00288837
----

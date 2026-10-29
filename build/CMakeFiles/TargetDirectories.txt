@@ -1,8 +1,0 @@
-/home/erie_lab/Documents/sensoray826/build/CMakeFiles/sensoray826_driver.dir
-/home/erie_lab/Documents/sensoray826/build/CMakeFiles/sensoray826_app.dir
-/home/erie_lab/Documents/sensoray826/build/CMakeFiles/edit_cache.dir
-/home/erie_lab/Documents/sensoray826/build/CMakeFiles/rebuild_cache.dir
-/home/erie_lab/Documents/sensoray826/build/CMakeFiles/list_install_components.dir
-/home/erie_lab/Documents/sensoray826/build/CMakeFiles/install.dir
-/home/erie_lab/Documents/sensoray826/build/CMakeFiles/install/local.dir
-/home/erie_lab/Documents/sensoray826/build/CMakeFiles/install/strip.dir
