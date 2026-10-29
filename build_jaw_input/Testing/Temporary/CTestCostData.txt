@@ -1,0 +1,18 @@
+festo_output_logging 5 0.000556439
+adc_adc_only 5 0.000466765
+adc_owner_refused 5 0.000434266
+adc_enabled_refused 5 0.000421105
+adc_mask_mismatch 5 0.000594447
+adc_slot_mismatch 5 0.000617457
+adc_partial 5 0.000486186
+adc_duplicate 5 0.000517167
+adc_wrap 5 0.000470739
+adc_stale_leftover 5 0.000451635
+adc_missed_trigger 5 0.000436642
+adc_supply 5 0.000458373
+adc_critical_error 5 0.000590531
+adc_stop_failure 5 0.000482106
+adc_combined 5 0.000466761
+adc_concurrency 5 0.00466598
+ownership_fuser 4 0.0516102
+---

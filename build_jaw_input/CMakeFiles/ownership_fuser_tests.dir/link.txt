@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/ownership_fuser_tests.dir/tests/ownership_fuser_tests.cpp.o CMakeFiles/ownership_fuser_tests.dir/src/board_ownership.cpp.o -o ownership_fuser_tests 

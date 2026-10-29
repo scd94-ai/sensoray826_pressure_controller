@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/festo_output_tests.dir/tests/festo_output_tests.cpp.o CMakeFiles/festo_output_tests.dir/src/festo.cpp.o -o festo_output_tests 

@@ -85,6 +85,51 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/erie_lab/Documents/sensoray826/build/CMakeFiles /home/erie_lab/Documents/sensoray826/build//CMakeFiles/progress.marks
@@ -117,24 +162,37 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named sensoray826_pressure_control
+# Target rules for targets named sensoray826_driver
 
 # Build rule for target.
-sensoray826_pressure_control: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 sensoray826_pressure_control
-.PHONY : sensoray826_pressure_control
+sensoray826_driver: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 sensoray826_driver
+.PHONY : sensoray826_driver
 
 # fast build rule for target.
-sensoray826_pressure_control/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/build
-.PHONY : sensoray826_pressure_control/fast
+sensoray826_driver/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_driver.dir/build.make CMakeFiles/sensoray826_driver.dir/build
+.PHONY : sensoray826_driver/fast
+
+#=============================================================================
+# Target rules for targets named sensoray826_app
+
+# Build rule for target.
+sensoray826_app: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 sensoray826_app
+.PHONY : sensoray826_app
+
+# fast build rule for target.
+sensoray826_app/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_app.dir/build.make CMakeFiles/sensoray826_app.dir/build
+.PHONY : sensoray826_app/fast
 
 src/festo.o: src/festo.cpp.o
 .PHONY : src/festo.o
 
 # target to build an object file
 src/festo.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/src/festo.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_driver.dir/build.make CMakeFiles/sensoray826_driver.dir/src/festo.cpp.o
 .PHONY : src/festo.cpp.o
 
 src/festo.i: src/festo.cpp.i
@@ -142,7 +200,7 @@ src/festo.i: src/festo.cpp.i
 
 # target to preprocess a source file
 src/festo.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/src/festo.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_driver.dir/build.make CMakeFiles/sensoray826_driver.dir/src/festo.cpp.i
 .PHONY : src/festo.cpp.i
 
 src/festo.s: src/festo.cpp.s
@@ -150,7 +208,7 @@ src/festo.s: src/festo.cpp.s
 
 # target to generate assembly for a file
 src/festo.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/src/festo.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_driver.dir/build.make CMakeFiles/sensoray826_driver.dir/src/festo.cpp.s
 .PHONY : src/festo.cpp.s
 
 src/main.o: src/main.cpp.o
@@ -158,7 +216,7 @@ src/main.o: src/main.cpp.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/src/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_app.dir/build.make CMakeFiles/sensoray826_app.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -166,7 +224,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/src/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_app.dir/build.make CMakeFiles/sensoray826_app.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -174,7 +232,7 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/src/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_app.dir/build.make CMakeFiles/sensoray826_app.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
 src/potentiometer.o: src/potentiometer.cpp.o
@@ -182,7 +240,7 @@ src/potentiometer.o: src/potentiometer.cpp.o
 
 # target to build an object file
 src/potentiometer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/src/potentiometer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_driver.dir/build.make CMakeFiles/sensoray826_driver.dir/src/potentiometer.cpp.o
 .PHONY : src/potentiometer.cpp.o
 
 src/potentiometer.i: src/potentiometer.cpp.i
@@ -190,7 +248,7 @@ src/potentiometer.i: src/potentiometer.cpp.i
 
 # target to preprocess a source file
 src/potentiometer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/src/potentiometer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_driver.dir/build.make CMakeFiles/sensoray826_driver.dir/src/potentiometer.cpp.i
 .PHONY : src/potentiometer.cpp.i
 
 src/potentiometer.s: src/potentiometer.cpp.s
@@ -198,7 +256,7 @@ src/potentiometer.s: src/potentiometer.cpp.s
 
 # target to generate assembly for a file
 src/potentiometer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/src/potentiometer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_driver.dir/build.make CMakeFiles/sensoray826_driver.dir/src/potentiometer.cpp.s
 .PHONY : src/potentiometer.cpp.s
 
 src/sensoray826.o: src/sensoray826.cpp.o
@@ -206,7 +264,7 @@ src/sensoray826.o: src/sensoray826.cpp.o
 
 # target to build an object file
 src/sensoray826.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/src/sensoray826.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_driver.dir/build.make CMakeFiles/sensoray826_driver.dir/src/sensoray826.cpp.o
 .PHONY : src/sensoray826.cpp.o
 
 src/sensoray826.i: src/sensoray826.cpp.i
@@ -214,7 +272,7 @@ src/sensoray826.i: src/sensoray826.cpp.i
 
 # target to preprocess a source file
 src/sensoray826.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/src/sensoray826.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_driver.dir/build.make CMakeFiles/sensoray826_driver.dir/src/sensoray826.cpp.i
 .PHONY : src/sensoray826.cpp.i
 
 src/sensoray826.s: src/sensoray826.cpp.s
@@ -222,7 +280,7 @@ src/sensoray826.s: src/sensoray826.cpp.s
 
 # target to generate assembly for a file
 src/sensoray826.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_pressure_control.dir/build.make CMakeFiles/sensoray826_pressure_control.dir/src/sensoray826.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sensoray826_driver.dir/build.make CMakeFiles/sensoray826_driver.dir/src/sensoray826.cpp.s
 .PHONY : src/sensoray826.cpp.s
 
 # Help Target
@@ -232,8 +290,13 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... sensoray826_pressure_control"
+	@echo "... sensoray826_app"
+	@echo "... sensoray826_driver"
 	@echo "... src/festo.o"
 	@echo "... src/festo.i"
 	@echo "... src/festo.s"

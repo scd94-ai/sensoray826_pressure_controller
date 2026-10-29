@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/adc_session_tests.dir/tests/adc_session_tests.cpp.o CMakeFiles/adc_session_tests.dir/src/sensoray826.cpp.o CMakeFiles/adc_session_tests.dir/src/festo.cpp.o -o adc_session_tests 
