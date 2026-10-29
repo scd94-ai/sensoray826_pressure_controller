@@ -1,0 +1,30 @@
+# CMake build and install outputs
+/build/
+/install/
+/log/
+/build_*/
+/install_*/
+/log_*/
+**/build/
+**/install/
+**/log/
+**/build_*/
+**/install_*/
+**/log_*/
+
+# CMake-generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+Testing/
+
+# Compiled artifacts
+*.o
+*.a
+*.so
+*.d
+
+# Python-generated files
+__pycache__/
+*.py[cod]
