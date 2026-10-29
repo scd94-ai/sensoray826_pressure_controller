@@ -1,0 +1,28 @@
+@PACKAGE_INIT@
+
+# The driver uses the vendor Sensoray SDK at link time. Resolve it on the
+# consuming machine rather than exporting a path from the build machine.
+find_library(SENSORAY826_LIB
+    NAMES 826_64
+    HINTS
+        "$ENV{SENSORAY826_SDK_ROOT}"
+        "$ENV{HOME}/Downloads/sdk_826_linux_3.3.17/middleware"
+    PATH_SUFFIXES middleware
+)
+
+if(NOT SENSORAY826_LIB)
+    message(FATAL_ERROR
+        "Could not find the Sensoray 826 library (826_64). "
+        "Set SENSORAY826_SDK_ROOT to the SDK or middleware directory."
+    )
+endif()
+
+if(NOT TARGET Sensoray826SDK::Sensoray826SDK)
+    add_library(Sensoray826SDK::Sensoray826SDK UNKNOWN IMPORTED)
+    set_target_properties(Sensoray826SDK::Sensoray826SDK PROPERTIES
+        IMPORTED_LOCATION "${SENSORAY826_LIB}"
+    )
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/sensoray826_driverTargets.cmake")
+check_required_components(sensoray826_driver)
