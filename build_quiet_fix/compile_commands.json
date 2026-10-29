@@ -1,0 +1,38 @@
+[
+{
+  "directory": "/home/erie_lab/Documents/sensoray826/build_quiet_fix",
+  "command": "/usr/bin/c++  -I/home/erie_lab/Documents/sensoray826/include -isystem /home/erie_lab/Downloads/sdk_826_linux_3.3.17/middleware -O3 -DNDEBUG -std=gnu++17 -o CMakeFiles/sensoray826_driver.dir/src/sensoray826.cpp.o -c /home/erie_lab/Documents/sensoray826/src/sensoray826.cpp",
+  "file": "/home/erie_lab/Documents/sensoray826/src/sensoray826.cpp",
+  "output": "CMakeFiles/sensoray826_driver.dir/src/sensoray826.cpp.o"
+},
+{
+  "directory": "/home/erie_lab/Documents/sensoray826/build_quiet_fix",
+  "command": "/usr/bin/c++  -I/home/erie_lab/Documents/sensoray826/include -isystem /home/erie_lab/Downloads/sdk_826_linux_3.3.17/middleware -O3 -DNDEBUG -std=gnu++17 -o CMakeFiles/sensoray826_driver.dir/src/festo.cpp.o -c /home/erie_lab/Documents/sensoray826/src/festo.cpp",
+  "file": "/home/erie_lab/Documents/sensoray826/src/festo.cpp",
+  "output": "CMakeFiles/sensoray826_driver.dir/src/festo.cpp.o"
+},
+{
+  "directory": "/home/erie_lab/Documents/sensoray826/build_quiet_fix",
+  "command": "/usr/bin/c++  -I/home/erie_lab/Documents/sensoray826/include -isystem /home/erie_lab/Downloads/sdk_826_linux_3.3.17/middleware -O3 -DNDEBUG -std=gnu++17 -o CMakeFiles/sensoray826_driver.dir/src/potentiometer.cpp.o -c /home/erie_lab/Documents/sensoray826/src/potentiometer.cpp",
+  "file": "/home/erie_lab/Documents/sensoray826/src/potentiometer.cpp",
+  "output": "CMakeFiles/sensoray826_driver.dir/src/potentiometer.cpp.o"
+},
+{
+  "directory": "/home/erie_lab/Documents/sensoray826/build_quiet_fix",
+  "command": "/usr/bin/c++  -I/home/erie_lab/Documents/sensoray826/include -isystem /home/erie_lab/Downloads/sdk_826_linux_3.3.17/middleware -O3 -DNDEBUG -std=gnu++17 -o CMakeFiles/sensoray826_app.dir/src/main.cpp.o -c /home/erie_lab/Documents/sensoray826/src/main.cpp",
+  "file": "/home/erie_lab/Documents/sensoray826/src/main.cpp",
+  "output": "CMakeFiles/sensoray826_app.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/erie_lab/Documents/sensoray826/build_quiet_fix",
+  "command": "/usr/bin/c++  -I/home/erie_lab/Documents/sensoray826/include -O3 -DNDEBUG -std=gnu++17 -o CMakeFiles/festo_output_tests.dir/tests/festo_output_tests.cpp.o -c /home/erie_lab/Documents/sensoray826/tests/festo_output_tests.cpp",
+  "file": "/home/erie_lab/Documents/sensoray826/tests/festo_output_tests.cpp",
+  "output": "CMakeFiles/festo_output_tests.dir/tests/festo_output_tests.cpp.o"
+},
+{
+  "directory": "/home/erie_lab/Documents/sensoray826/build_quiet_fix",
+  "command": "/usr/bin/c++  -I/home/erie_lab/Documents/sensoray826/include -O3 -DNDEBUG -std=gnu++17 -o CMakeFiles/festo_output_tests.dir/src/festo.cpp.o -c /home/erie_lab/Documents/sensoray826/src/festo.cpp",
+  "file": "/home/erie_lab/Documents/sensoray826/src/festo.cpp",
+  "output": "CMakeFiles/festo_output_tests.dir/src/festo.cpp.o"
+}
+]

@@ -1,0 +1,286 @@
+Start testing: Oct 28 18:58 EDT
+----------------------------------------------------------
+1/17 Testing: ownership_fuser
+1/17 Test: ownership_fuser
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/ownership_fuser_tests"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"ownership_fuser" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+PASS 12 bounded read-only audit subprocess/decision cases; no SDK or device
+<end of output>
+Test time =   0.21 sec
+----------------------------------------------------------
+Test Passed.
+"ownership_fuser" end time: Oct 28 18:58 EDT
+"ownership_fuser" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/17 Testing: festo_output_logging
+2/17 Test: festo_output_logging
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/festo_output_tests"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"festo_output_logging" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+Festo fake-I/O regression: 39 cases and 158 checks passed; no SDK or hardware access.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"festo_output_logging" end time: Oct 28 18:58 EDT
+"festo_output_logging" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/17 Testing: adc_adc_only
+3/17 Test: adc_adc_only
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "adc_only"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_adc_only" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+PASS adc_only
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_adc_only" end time: Oct 28 18:58 EDT
+"adc_adc_only" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/17 Testing: adc_owner_refused
+4/17 Test: adc_owner_refused
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "owner_refused"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_owner_refused" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_owner_refused" end time: Oct 28 18:58 EDT
+"adc_owner_refused" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/17 Testing: adc_enabled_refused
+5/17 Test: adc_enabled_refused
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "enabled_refused"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_enabled_refused" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_enabled_refused" end time: Oct 28 18:58 EDT
+"adc_enabled_refused" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/17 Testing: adc_mask_mismatch
+6/17 Test: adc_mask_mismatch
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "mask_mismatch"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_mask_mismatch" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+PASS mask_mismatch
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_mask_mismatch" end time: Oct 28 18:58 EDT
+"adc_mask_mismatch" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/17 Testing: adc_slot_mismatch
+7/17 Test: adc_slot_mismatch
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "slot_mismatch"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_slot_mismatch" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+PASS slot_mismatch
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_slot_mismatch" end time: Oct 28 18:58 EDT
+"adc_slot_mismatch" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/17 Testing: adc_partial
+8/17 Test: adc_partial
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "partial"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_partial" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+PASS partial
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_partial" end time: Oct 28 18:58 EDT
+"adc_partial" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/17 Testing: adc_duplicate
+9/17 Test: adc_duplicate
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "duplicate"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_duplicate" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+PASS duplicate
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_duplicate" end time: Oct 28 18:58 EDT
+"adc_duplicate" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/17 Testing: adc_wrap
+10/17 Test: adc_wrap
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "wrap"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_wrap" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+PASS wrap
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_wrap" end time: Oct 28 18:58 EDT
+"adc_wrap" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/17 Testing: adc_stale_leftover
+11/17 Test: adc_stale_leftover
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "stale_leftover"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_stale_leftover" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+PASS stale_leftover
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_stale_leftover" end time: Oct 28 18:58 EDT
+"adc_stale_leftover" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/17 Testing: adc_missed_trigger
+12/17 Test: adc_missed_trigger
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "missed_trigger"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_missed_trigger" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+PASS missed_trigger
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_missed_trigger" end time: Oct 28 18:58 EDT
+"adc_missed_trigger" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/17 Testing: adc_supply
+13/17 Test: adc_supply
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "supply"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_supply" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+PASS supply
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_supply" end time: Oct 28 18:58 EDT
+"adc_supply" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/17 Testing: adc_critical_error
+14/17 Test: adc_critical_error
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "critical_error"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_critical_error" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+PASS critical_error
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_critical_error" end time: Oct 28 18:58 EDT
+"adc_critical_error" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/17 Testing: adc_stop_failure
+15/17 Test: adc_stop_failure
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "stop_failure"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_stop_failure" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+PASS stop_failure
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_stop_failure" end time: Oct 28 18:58 EDT
+"adc_stop_failure" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/17 Testing: adc_combined
+16/17 Test: adc_combined
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "combined"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_combined" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+Pressure command : 0 kPa
+Command voltage  : 2.5 V
+DAC setpoint     : 16384 / 65535
+Festo initialized. DAC=0 ADC=15 slot=0
+Pressure command : 0 kPa
+Command voltage  : 2.5 V
+DAC setpoint     : 16384 / 65535
+Festo initialized. DAC=1 ADC=14 slot=1
+Pressure command : 0 kPa
+Command voltage  : 2.5 V
+DAC setpoint     : 16384 / 65535
+Festo initialized. DAC=2 ADC=13 slot=2
+PASS combined
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"adc_combined" end time: Oct 28 18:58 EDT
+"adc_combined" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/17 Testing: adc_concurrency
+17/17 Test: adc_concurrency
+Command: "/home/erie_lab/Documents/sensoray826/build_jaw_input/adc_session_tests" "concurrency"
+Directory: /home/erie_lab/Documents/sensoray826/build_jaw_input
+"adc_concurrency" start time: Oct 28 18:58 EDT
+Output:
+----------------------------------------------------------
+PASS concurrency
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"adc_concurrency" end time: Oct 28 18:58 EDT
+"adc_concurrency" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 28 18:58 EDT

@@ -48,6 +48,7 @@ add_library(sensoray826_driver
     src/sensoray826.cpp
     src/festo.cpp
     src/potentiometer.cpp
+    src/pressure_sensor.cpp
 )
 
 add_library(sensoray826::driver ALIAS sensoray826_driver)
