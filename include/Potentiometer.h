@@ -1,12 +1,12 @@
+
 #ifndef POTENTIOMETER_H
 #define POTENTIOMETER_H
 
-#include "Sensoray826.h"
+#include "Sensoray826_Device.h"
 
-class Potentiometer {
+class Potentiometer : public Sensoray826_Device {
+
 private:
-    Sensoray826& sensoray_;
-
     unsigned int adc_channel_;
     unsigned int adc_slot_;
 
@@ -22,8 +22,10 @@ public:
         double max_voltage = 5.0
     );
 
-    int initialize();
+    int initialize() override;
+
     int readVoltage(double& voltage);
+
     double readPercent(double voltage) const;
 };
 

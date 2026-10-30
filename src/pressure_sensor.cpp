@@ -1,29 +1,25 @@
-#include "826api.h"
+
 #include "Pressure_Sensor.h"
+#include "826api.h"
 
 #include <iostream>
-#include <limits>
-#include <algorithm>
-#include <cmath>
 
-
+// Constructor
 Pressure_Sensor::Pressure_Sensor(
     Sensoray826& sensoray,
     unsigned int adc_channel,
     unsigned int adc_slot
-) : sensoray_(sensoray),
-    adc_channel_(adc_channel),
-    adc_slot_(adc_slot)
+)
+    : Sensoray826_Device(sensoray),
+      adc_channel_(adc_channel),
+      adc_slot_(adc_slot)
 {
 }
 
+// Initialize pressure sensor
 int Pressure_Sensor::initialize()
 {
-    const int status =
-        sensoray_.configureAdcSlot(
-            adc_slot_,
-            adc_channel_
-        );
+    const int status = configureADC(adc_slot_, adc_channel_);
 
     if (status != S826_ERR_OK) {
         std::cerr << "Failed to configure pressure sensor ADC slot "
@@ -38,24 +34,23 @@ int Pressure_Sensor::initialize()
     return S826_ERR_OK;
 }
 
-double Pressure_Sensor::readVoltage(double& voltage)
+// Read voltage
+int Pressure_Sensor::readVoltage(double& voltage)
 {
     const int status =
-        sensoray_.readAdcVoltage(
-            adc_slot_,
-            voltage,
-            1000
-        );
+        Sensoray826_Device::readVoltage(adc_slot_, voltage);
 
     if (status != S826_ERR_OK) {
-        std::cerr << "Pressure Sensor ADC read failed: "
+        std::cerr << "Pressure sensor ADC read failed: "
                   << status << '\n';
     }
 
     return status;
 }
 
-bool Pressure_Sensor::readPressure(double& pressure_kpa) {
+// Convert voltage to pressure
+bool Pressure_Sensor::readPressure(double& pressure_kpa)
+{
     double voltage = 0.0;
 
     if (readVoltage(voltage) != S826_ERR_OK) {

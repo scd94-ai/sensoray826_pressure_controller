@@ -1,12 +1,12 @@
+
 #ifndef FESTO_H
 #define FESTO_H
 
-#include "Sensoray826.h"
+#include "Sensoray826_Device.h"
 
-class Festo {
+class Festo : public Sensoray826_Device {
+
 private:
-    Sensoray826& sensoray_;
-
     unsigned int dac_channel_;
     unsigned int adc_channel_;
     unsigned int adc_slot_;
@@ -19,7 +19,7 @@ private:
 
     double pressureToVoltage(double pressure_kpa) const;
     double voltageToPressure(double voltage) const;
-    unsigned int pressureToDac(double pressure_kpa) const;
+
     int generateSineWave(double* buf, int resolution) const;
 
 public:
@@ -34,9 +34,11 @@ public:
         double max_voltage = 5.0
     );
 
-    int initialize();
-    int setPressure(double pressure_kpa);
+    int initialize() override;
 
+    int setPressure(double pressure_kpa);
+    int setPressure(double pressure_kpa, bool log_success);
+    
     int readPressure(
         double& voltage,
         double& pressure_kpa,

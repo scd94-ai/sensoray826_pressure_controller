@@ -1,26 +1,27 @@
+
 #ifndef PRESSURE_SENSOR_H
 #define PRESSURE_SENSOR_H
 
-#include "Sensoray826.h"
+#include "Sensoray826_Device.h"
 
+class Pressure_Sensor : public Sensoray826_Device {
 
-class Pressure_Sensor {
-    private:
-        Sensoray826& sensoray_;
+private:
+    unsigned int adc_channel_;
+    unsigned int adc_slot_;
 
-        unsigned int adc_channel_;
-        unsigned int adc_slot_;
-    public:
-            Pressure_Sensor(
-            Sensoray826& sensoray,
-            unsigned int adc_channel,
-            unsigned int adc_slot
-        );
+public:
+    Pressure_Sensor(
+        Sensoray826& sensoray,
+        unsigned int adc_channel,
+        unsigned int adc_slot
+    );
 
-        int initialize();
-        double readVoltage(double& voltage);
-        bool readPressure(double& pressure_kpa);
+    int initialize() override;
 
+    int readVoltage(double& voltage);
+
+    bool readPressure(double& pressure_kpa);
 };
 
 #endif

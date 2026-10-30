@@ -36,9 +36,12 @@ set_target_properties(Sensoray826SDK::Sensoray826SDK PROPERTIES
 # Reusable driver library.
 add_library(sensoray826_driver
     src/sensoray826.cpp
+    src/sensoray826_device.cpp
+    src/board_ownership.cpp
     src/festo.cpp
     src/potentiometer.cpp
     src/pressure_sensor.cpp
+    src/smc.cpp
 )
 add_library(sensoray826::driver ALIAS sensoray826_driver)
 set_target_properties(sensoray826_driver PROPERTIES
